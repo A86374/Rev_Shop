@@ -1,0 +1,19 @@
+# Build output
+target/
+**/target/
+dist/
+node_modules/
+
+# IDE
+.idea/
+**/.idea/
+*.iml
+.vscode/
+
+# Spring Initializr leftovers
+HELP.md
+
+# Secrets - never commit
+.env
+*.pem
+*.key
