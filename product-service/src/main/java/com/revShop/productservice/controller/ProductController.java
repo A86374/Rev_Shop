@@ -34,9 +34,18 @@ public class ProductController {
         return productService.addProduct(request, sellerId);
     }
 
+
     @GetMapping("/products")
-    public List<Product> getAllProducts() {
-        return productService.getAllProducts();
+    public List<Product> searchFilterSortProducts(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) java.math.BigDecimal minPrice,
+            @RequestParam(required = false) java.math.BigDecimal maxPrice,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        return productService.searchFilterSortProducts(
+                search, categoryId, minPrice, maxPrice, sortBy, direction);
     }
 
     @GetMapping("/products/{id}")

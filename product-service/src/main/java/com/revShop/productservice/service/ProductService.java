@@ -14,6 +14,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import com.revShop.productservice.specification.ProductSpecifications;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import java.math.BigDecimal;
 
 @Service
 public class ProductService {
@@ -95,4 +99,63 @@ public class ProductService {
     public Page<Product> getProductsPage(Pageable pageable) {
         return productRepository.findByActiveTrue(pageable);
     }
+
+
+    public List<Product> searchFilterSortProducts(
+            String search,
+            Long categoryId,
+            BigDecimal minPrice,
+            BigDecimal maxPrice,
+            String sortBy,
+            String direction) {
+
+        if (minPrice != null && minPrice.signum() < 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Minimum price cannot be negative");
+        }
+
+        if (maxPrice != null && maxPrice.signum() < 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Maximum price cannot be negative");
+        }
+
+        if (minPrice != null && maxPrice != null
+                && minPrice.compareTo(maxPrice) > 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Minimum price cannot exceed maximum price");
+        }
+
+        String field = (sortBy == null || sortBy.isBlank())
+                ? "name" : sortBy.trim();
+
+        if (!field.equals("name") && !field.equals("price")) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "sortBy must be name or price");
+        }
+
+        if (direction != null
+                && !direction.equalsIgnoreCase("asc")
+                && !direction.equalsIgnoreCase("desc")) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "direction must be asc or desc");
+        }
+
+        Sort.Direction sortDirection =
+                "desc".equalsIgnoreCase(direction)
+                        ? Sort.Direction.DESC
+                        : Sort.Direction.ASC;
+
+        Specification<Product> spec =
+                ProductSpecifications.activeProducts()
+                        .and(ProductSpecifications.searchByName(search))
+                        .and(ProductSpecifications.filterByCategory(categoryId))
+                        .and(ProductSpecifications.filterByPrice(minPrice, maxPrice));
+
+        return productRepository.findAll(
+                spec, Sort.by(sortDirection, field));
+    }
+
 }
