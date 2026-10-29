@@ -1,7 +1,7 @@
-
 package com.revShop.productservice.controller;
 
 import com.revShop.productservice.dto.ProductRequest;
+import com.revShop.productservice.dto.ProductStatusRequest;
 import com.revShop.productservice.entity.Product;
 import com.revShop.productservice.service.ProductService;
 
@@ -72,4 +72,30 @@ public class ProductController {
         return productService.getProductsPage(pageable);
     }
 
+    // ---------------- US-07: seller's own products ----------------
+
+    @GetMapping("/seller/products")
+    public List<Product> getMyProducts(
+            @RequestHeader("X-User-Id") Long sellerId) {
+
+        return productService.getSellerProducts(sellerId);
+    }
+
+    @PutMapping("/seller/products/{id}")
+    public Product updateProduct(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody ProductRequest request,
+            @RequestHeader("X-User-Id") Long sellerId) {
+
+        return productService.updateProduct(id, request, sellerId);
+    }
+
+    @PatchMapping("/seller/products/{id}/status")
+    public Product updateStatus(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody ProductStatusRequest request,
+            @RequestHeader("X-User-Id") Long sellerId) {
+
+        return productService.setActive(id, request.active(), sellerId);
+    }
 }

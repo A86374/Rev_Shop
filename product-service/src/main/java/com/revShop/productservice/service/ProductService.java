@@ -1,4 +1,3 @@
-
 package com.revShop.productservice.service;
 
 import com.revShop.productservice.dto.ProductRequest;
@@ -94,5 +93,61 @@ public class ProductService {
 
     public Page<Product> getProductsPage(Pageable pageable) {
         return productRepository.findByActiveTrue(pageable);
+    }
+
+    // ---------------- US-07: a seller manages only their own products ----------------
+
+    public List<Product> getSellerProducts(Long sellerId) {
+        return productRepository.findBySellerId(sellerId);   // active and inactive
+    }
+
+    public Product getOwnedProduct(Long id, Long sellerId) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Product not found"
+                ));
+
+        if (!product.getSellerId().equals(sellerId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "You can only manage your own products"
+            );
+        }
+
+        return product;
+    }
+
+    public Product updateProduct(Long id, ProductRequest request, Long sellerId) {
+        Product product = getOwnedProduct(id, sellerId);
+
+        if (request.price().compareTo(request.mrp()) > 0) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Selling price cannot be greater than MRP"
+            );
+        }
+
+        Category category = categoryRepository.findById(request.categoryId())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Category not found"
+                ));
+
+        product.setName(request.name().trim());
+        product.setDescription(request.description());
+        product.setCategory(category);
+        product.setMrp(request.mrp());
+        product.setPrice(request.price());
+        product.setStock(request.stock());
+        product.setLowStockThreshold(request.lowStockThreshold());
+
+        return productRepository.save(product);
+    }
+
+    public Product setActive(Long id, boolean active, Long sellerId) {
+        Product product = getOwnedProduct(id, sellerId);
+        product.setActive(active);
+        return productRepository.save(product);
     }
 }
