@@ -96,7 +96,7 @@ public class ProductService {
         return productRepository.findByActiveTrue(pageable);
     }
 
-<<<<<<< HEAD
+
     // ---------------- US-07: a seller manages only their own products ----------------
 
     public List<Product> getSellerProducts(Long sellerId) {
