@@ -66,6 +66,21 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
+  // the profile page calls this after a save, so the navbar shows the new name
+  updateUser(changes: Partial<Pick<AuthUser, 'fullName'>>): void {
+    const current = this.user();
+    if (!current) {
+      return;
+    }
+    const next = { ...current, ...changes };
+    try {
+      localStorage.setItem(USER_KEY, JSON.stringify(next));
+    } catch {
+      // private window: the name still changes until the tab closes
+    }
+    this.user.set(next);
+  }
+
   // where each role lands after login
   homeFor(role: Role): string {
     switch (role) {
