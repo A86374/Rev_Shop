@@ -1,0 +1,88 @@
+# RevShop on one EC2 server: 7 Spring Boot containers + Angular/Nginx, database on private RDS.
+# Values like ${RDS_ENDPOINT} come from /opt/revshop/.env on the server (never from Git).
+name: revshop
+
+# settings every database service shares
+x-db-env: &db-env
+  EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8761/eureka/
+  SPRING_DATASOURCE_URL: jdbc:mysql://${RDS_ENDPOINT}:3306/revshop_db?sslMode=REQUIRED
+  SPRING_DATASOURCE_USERNAME: revshop_app
+  SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+  JAVA_TOOL_OPTIONS: -Xms64m -Xmx256m -XX:+UseSerialGC
+
+x-service: &service
+  restart: unless-stopped
+  networks: [revshop]
+  depends_on:
+    discovery-server:
+      condition: service_healthy
+
+services:
+  discovery-server:
+    image: ${DOCKERHUB_USER}/revshop-discovery-server:${IMAGE_TAG}
+    restart: unless-stopped
+    networks: [revshop]
+    environment:
+      JAVA_TOOL_OPTIONS: -Xms64m -Xmx256m -XX:+UseSerialGC
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8761' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
+
+  api-gateway:
+    <<: *service
+    image: ${DOCKERHUB_USER}/revshop-api-gateway:${IMAGE_TAG}
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8761/eureka/
+      JWT_SECRET: ${JWT_SECRET}
+      JAVA_TOOL_OPTIONS: -Xms64m -Xmx256m -XX:+UseSerialGC
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 60s
+
+  user-service:
+    <<: *service
+    image: ${DOCKERHUB_USER}/revshop-user-service:${IMAGE_TAG}
+    environment:
+      <<: *db-env
+      JWT_SECRET: ${JWT_SECRET}
+
+  product-service:
+    <<: *service
+    image: ${DOCKERHUB_USER}/revshop-product-service:${IMAGE_TAG}
+    environment:
+      <<: *db-env
+      AWS_REGION: ${AWS_REGION}      # S3 keys come from the EC2 IAM role, not from here
+
+  cart-service:
+    <<: *service
+    image: ${DOCKERHUB_USER}/revshop-cart-service:${IMAGE_TAG}
+    environment: *db-env
+
+  order-service:
+    <<: *service
+    image: ${DOCKERHUB_USER}/revshop-order-service:${IMAGE_TAG}
+    environment: *db-env
+
+  payment-service:
+    <<: *service
+    image: ${DOCKERHUB_USER}/revshop-payment-service:${IMAGE_TAG}
+    environment: *db-env
+
+  frontend:
+    image: ${DOCKERHUB_USER}/revshop-frontend:${IMAGE_TAG}
+    restart: unless-stopped
+    networks: [revshop]
+    ports: ["80:80"]                 # becomes "127.0.0.1:8080:80" when HTTPS is added
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+
+networks:
+  revshop:
+    driver: bridge
