@@ -1,0 +1,99 @@
+<div class="container py-4" style="max-width: 900px;">
+  @if (profile(); as p) {
+    <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+      <div class="rounded-circle d-grid fw-bold fs-4" style="width: 56px; height: 56px; place-items: center; background: #ffb020; color: #1a1203;">
+        {{ p.fullName.charAt(0).toUpperCase() }}
+      </div>
+      <div>
+        <h2 class="h4 mb-0">{{ p.fullName }}</h2>
+        <div class="small text-muted">
+          {{ p.role === 'BUYER' ? 'Buyer' : p.role === 'SELLER' ? 'Seller' : 'Admin' }}
+          · member since {{ p.createdAt | date: 'MMM yyyy' }}
+        </div>
+      </div>
+    </div>
+
+    @if (error()) {
+      <div class="alert alert-danger">{{ error() }}</div>
+    }
+
+    <div class="row g-4">
+      <!-- profile -->
+      <div class="col-lg-6">
+        <form class="card card-body h-100" [formGroup]="form" (ngSubmit)="save()" novalidate>
+          <h3 class="h6 mb-3">Your details</h3>
+
+          <label for="email" class="form-label small mb-1">Email (used to log in)</label>
+          <input id="email" class="form-control mb-3" [value]="p.email" disabled>
+
+          <label for="fullName" class="form-label small mb-1">Full name</label>
+          <input id="fullName" class="form-control" formControlName="fullName" autocomplete="name"
+                 [class.is-invalid]="showError('fullName')">
+          <div class="invalid-feedback">Name is required.</div>
+
+          <label for="phone" class="form-label small mb-1 mt-3">Phone</label>
+          <input id="phone" class="form-control" formControlName="phone" inputmode="numeric" maxlength="10"
+                 autocomplete="tel" [class.is-invalid]="showError('phone')">
+          <div class="invalid-feedback">Phone must be exactly 10 digits.</div>
+
+          @if (p.role === 'SELLER') {
+            <label for="businessName" class="form-label small mb-1 mt-3">Business name</label>
+            <input id="businessName" class="form-control" formControlName="businessName"
+                   [class.is-invalid]="showError('businessName')">
+            <div class="invalid-feedback">Sellers need a business name.</div>
+          }
+
+          <div class="d-flex align-items-center gap-3 mt-4">
+            <button type="submit" class="btn btn-primary" [disabled]="saving() || form.pristine">
+              {{ saving() ? 'Saving…' : 'Save changes' }}
+            </button>
+            @if (saved()) {
+              <span class="small text-success">Saved</span>
+            }
+          </div>
+        </form>
+      </div>
+
+      <!-- password -->
+      <div class="col-lg-6">
+        <form class="card card-body h-100" [formGroup]="passwordForm" (ngSubmit)="changePassword()" novalidate>
+          <h3 class="h6 mb-3">Change password</h3>
+
+          @if (passwordError()) {
+            <div class="alert alert-danger py-2">{{ passwordError() }}</div>
+          }
+          @if (passwordChanged()) {
+            <div class="alert alert-success py-2">Password changed. Use the new one next time you log in.</div>
+          }
+
+          <label for="currentPassword" class="form-label small mb-1">Current password</label>
+          <input id="currentPassword" type="password" class="form-control" formControlName="currentPassword"
+                 autocomplete="current-password">
+
+          <label for="newPassword" class="form-label small mb-1 mt-3">New password</label>
+          <input id="newPassword" type="password" class="form-control" formControlName="newPassword"
+                 autocomplete="new-password"
+                 [class.is-invalid]="passwordForm.controls.newPassword.invalid && passwordForm.controls.newPassword.touched">
+          <div class="invalid-feedback">At least 8 characters.</div>
+
+          <label for="confirmPassword" class="form-label small mb-1 mt-3">New password again</label>
+          <input id="confirmPassword" type="password" class="form-control" formControlName="confirmPassword"
+                 autocomplete="new-password">
+
+          <button type="submit" class="btn btn-outline-primary mt-4 align-self-start" [disabled]="passwordSaving()">
+            {{ passwordSaving() ? 'Changing…' : 'Change password' }}
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- only buyers need delivery addresses -->
+    @if (p.role === 'BUYER') {
+      <app-address-book />
+    }
+  } @else if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+  } @else {
+    <p class="text-muted">Loading your profile…</p>
+  }
+</div>
