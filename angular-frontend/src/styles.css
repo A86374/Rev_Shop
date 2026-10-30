@@ -1,0 +1,35 @@
+/* Bootstrap is loaded first (angular.json "styles"); RevShop's own global styles go here */
+body {
+  background-color: #f6f7fb;
+  font-family: "Plus Jakarta Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+/* every page's main buttons in RevShop ink, to match the navbar */
+.btn-primary {
+  --bs-btn-bg: #13151d;
+  --bs-btn-border-color: #13151d;
+  --bs-btn-hover-bg: #2b2f42;
+  --bs-btn-hover-border-color: #2b2f42;
+  --bs-btn-active-bg: #000;
+  --bs-btn-active-border-color: #000;
+  --bs-btn-disabled-bg: #13151d;
+  --bs-btn-disabled-border-color: #13151d;
+  --bs-btn-focus-shadow-rgb: 255, 176, 32;
+}
+.btn-outline-primary {
+  --bs-btn-color: #13151d;
+  --bs-btn-border-color: #13151d;
+  --bs-btn-hover-bg: #13151d;
+  --bs-btn-hover-border-color: #13151d;
+  --bs-btn-active-bg: #13151d;
+  --bs-btn-active-border-color: #13151d;
+  --bs-btn-focus-shadow-rgb: 255, 176, 32;
+}
+.nav-pills {
+  --bs-nav-pills-link-active-bg: #13151d;
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: #ffb020;
+  box-shadow: 0 0 0 0.2rem rgba(255, 176, 32, 0.25);
+}
