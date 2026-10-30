@@ -1,0 +1,95 @@
+<section class="mt-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h3 class="h5 mb-0">Delivery addresses</h3>
+    @if (!formOpen() && addresses().length < max) {
+      <button type="button" class="btn btn-sm btn-primary" (click)="openNew()">+ Add address</button>
+    }
+  </div>
+
+  @if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  @if (formOpen()) {
+    <form class="card card-body mb-3" [formGroup]="form" (ngSubmit)="save()" novalidate>
+      <h4 class="h6">{{ editingId() === null ? 'New address' : 'Edit address' }}</h4>
+      <div class="row g-2">
+        <div class="col-md-6">
+          <label for="a-name" class="form-label small mb-1">Receiver’s name</label>
+          <input id="a-name" class="form-control" formControlName="fullName" [class.is-invalid]="showError('fullName')">
+          <div class="invalid-feedback">Name is required.</div>
+        </div>
+        <div class="col-md-6">
+          <label for="a-phone" class="form-label small mb-1">Phone</label>
+          <input id="a-phone" class="form-control" formControlName="phone" inputmode="numeric" maxlength="10"
+                 [class.is-invalid]="showError('phone')">
+          <div class="invalid-feedback">Phone must be exactly 10 digits.</div>
+        </div>
+        <div class="col-12">
+          <label for="a-line1" class="form-label small mb-1">House number and street</label>
+          <input id="a-line1" class="form-control" formControlName="line1" [class.is-invalid]="showError('line1')">
+          <div class="invalid-feedback">Required.</div>
+        </div>
+        <div class="col-12">
+          <label for="a-line2" class="form-label small mb-1">Area or landmark (optional)</label>
+          <input id="a-line2" class="form-control" formControlName="line2">
+        </div>
+        <div class="col-md-5">
+          <label for="a-city" class="form-label small mb-1">City</label>
+          <input id="a-city" class="form-control" formControlName="city" [class.is-invalid]="showError('city')">
+          <div class="invalid-feedback">Required.</div>
+        </div>
+        <div class="col-md-4">
+          <label for="a-state" class="form-label small mb-1">State</label>
+          <input id="a-state" class="form-control" formControlName="state" [class.is-invalid]="showError('state')">
+          <div class="invalid-feedback">Required.</div>
+        </div>
+        <div class="col-md-3">
+          <label for="a-pin" class="form-label small mb-1">PIN code</label>
+          <input id="a-pin" class="form-control" formControlName="pincode" inputmode="numeric" maxlength="6"
+                 [class.is-invalid]="showError('pincode')">
+          <div class="invalid-feedback">6 digits, not starting with 0.</div>
+        </div>
+      </div>
+      <div class="d-flex gap-2 mt-3">
+        <button type="submit" class="btn btn-primary" [disabled]="saving()">{{ saving() ? 'Saving…' : 'Save address' }}</button>
+        <button type="button" class="btn btn-outline-secondary" (click)="cancel()">Cancel</button>
+      </div>
+    </form>
+  }
+
+  <div class="row g-3">
+    @for (a of addresses(); track a.id) {
+      <div class="col-md-6">
+        <div class="card h-100" [class.border-warning]="a.defaultAddress" [class.border-2]="a.defaultAddress">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+              <span class="fw-semibold">{{ a.fullName }}</span>
+              @if (a.defaultAddress) {
+                <span class="badge text-bg-warning">Default</span>
+              }
+            </div>
+            <div class="small mt-1">
+              {{ a.line1 }}@if (a.line2) {, {{ a.line2 }}}<br>
+              {{ a.city }}, {{ a.state }} {{ a.pincode }}<br>
+              Phone {{ a.phone }}
+            </div>
+          </div>
+          <div class="card-footer bg-transparent d-flex flex-wrap gap-2">
+            <button type="button" class="btn btn-sm btn-outline-primary" (click)="openEdit(a)">Edit</button>
+            @if (!a.defaultAddress) {
+              <button type="button" class="btn btn-sm btn-outline-secondary" [disabled]="busyId() === a.id"
+                      (click)="makeDefault(a)">Make default</button>
+            }
+            <button type="button" class="btn btn-sm btn-outline-danger ms-auto" [disabled]="busyId() === a.id"
+                    (click)="remove(a)">Delete</button>
+          </div>
+        </div>
+      </div>
+    } @empty {
+      @if (!formOpen()) {
+        <div class="col-12"><p class="text-muted mb-0">No saved addresses yet. Add one to check out faster.</p></div>
+      }
+    }
+  </div>
+</section>

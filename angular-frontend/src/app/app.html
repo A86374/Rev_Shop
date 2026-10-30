@@ -68,6 +68,7 @@
                   <div class="fw-semibold">{{ u.fullName }}</div>
                   <div class="small text-muted text-truncate">{{ u.email }}</div>
                 </div>
+                <a class="account-item" role="menuitem" routerLink="/profile" (click)="closeMenus()">My profile</a>
                 <a class="account-item" role="menuitem" [routerLink]="auth.homeFor(u.role)" (click)="closeMenus()">Go to my area</a>
                 <button type="button" class="account-item text-danger" role="menuitem" (click)="logout()">Log out</button>
               </div>
