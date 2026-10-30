@@ -8,26 +8,22 @@ import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    // Get a buyer's orders, newest first
+    // US-17 (you): my orders
     List<Order> findByBuyerIdOrderByCreatedAtDesc(Long buyerId);
 
-    // Get all orders of a seller
+    // US-19 (Hasitha, tomorrow): seller's orders
     List<Order> findBySellerIdOrderByCreatedAtDesc(Long sellerId);
 
-    // Get a seller's orders by status
-    List<Order> findBySellerIdAndStatusOrderByCreatedAtDesc(
-            Long sellerId, OrderStatus status);
+    List<Order> findBySellerIdAndStatusOrderByCreatedAtDesc(Long sellerId, OrderStatus status);
 
-    // Get all orders from one checkout
+    // US-15 (you, tomorrow): every order of one checkout, to apply Pay / Cancel
     List<Order> findByCheckoutRef(String checkoutRef);
 
-    // Check if a buyer purchased a product with a given status
-    boolean existsByBuyerIdAndStatusAndItems_ProductId(
-            Long buyerId, OrderStatus status, Long productId);
+    // US-20 (you, tomorrow): did this buyer receive this product?
+    boolean existsByBuyerIdAndStatusAndItems_ProductId(Long buyerId, OrderStatus status, Long productId);
 
-    // Get all orders, newest first
+    // US-25 (Saturday): admin monitoring
     List<Order> findAllByOrderByCreatedAtDesc();
 
-    // Get all orders with a specific status
     List<Order> findByStatusOrderByCreatedAtDesc(OrderStatus status);
 }
