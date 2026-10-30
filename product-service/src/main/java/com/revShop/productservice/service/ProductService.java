@@ -14,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-
 @Service
 public class ProductService {
 
@@ -95,7 +94,6 @@ public class ProductService {
     public Page<Product> getProductsPage(Pageable pageable) {
         return productRepository.findByActiveTrue(pageable);
     }
-
 
     // ---------------- US-07: a seller manages only their own products ----------------
 
