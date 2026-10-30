@@ -150,7 +150,8 @@
 }
 .account-item:hover { background: #f3f4f6; }
 
-.backdrop { position: fixed; inset: 0; z-index: 1029; }
+/* under the sticky navbar (z-index 1020), so the menu above it stays clickable */
+.backdrop { position: fixed; inset: 0; z-index: 1019; }
 
 /* phone: menu items stack, the account menu sits inline */
 @media (max-width: 991.98px) {
