@@ -26,7 +26,18 @@ public class AuthService {
         if (role == Role.ADMIN) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "You can only register as BUYER or SELLER");
         }
-        // US-02 (Hasitha): add the seller business-name rule here
+
+        // US-02: sellers must give a business name; buyers never store one
+        String businessName = null;
+        if (role == Role.SELLER) {
+            if (req.businessName() == null || req.businessName().isBlank()) {
+                throw new ApiException(HttpStatus.BAD_REQUEST, "Business name is required for sellers");
+            }
+            businessName = req.businessName().trim();
+            if (businessName.length() > 150) {
+                throw new ApiException(HttpStatus.BAD_REQUEST, "Business name cannot exceed 150 characters");
+            }
+        }
 
         String email = req.email().trim().toLowerCase();
         if (userRepository.existsByEmail(email)) {
@@ -39,7 +50,7 @@ public class AuthService {
                 .phone(req.phone())
                 .passwordHash(passwordEncoder.encode(req.password()))
                 .role(role)
-                .businessName(req.businessName())
+                .businessName(businessName)
                 .build();
 
         return toResponse(userRepository.save(user));
