@@ -1,0 +1,119 @@
+<!-- thin strip above the navbar -->
+<div class="strip">
+  <div class="container d-flex justify-content-between align-items-center gap-3">
+    <span>Cash on delivery or pay online · Sellers from all over India</span>
+    @if (!auth.user()) {
+      <a routerLink="/register/seller" class="strip-link">Sell on RevShop →</a>
+    }
+  </div>
+</div>
+
+<nav class="navbar navbar-expand-lg navbar-dark rs-nav sticky-top">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/" (click)="closeMenus()">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2"
+             stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8z"/>
+          <path d="M9 8V6a3 3 0 0 1 6 0v2"/>
+        </svg>
+      </span>
+      <span class="brand-word">Rev<span class="brand-accent">Shop</span></span>
+    </a>
+
+    <button class="navbar-toggler" type="button" aria-label="Toggle navigation"
+            [attr.aria-expanded]="menuOpen()" (click)="menuOpen.set(!menuOpen())">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" [class.show]="menuOpen()" (click)="closeMenus()">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" routerLink="/products" routerLinkActive="active">Products</a></li>
+
+        @if (auth.user()?.role === 'BUYER') {
+          <li class="nav-item"><a class="nav-link" routerLink="/orders" routerLinkActive="active">My orders</a></li>
+          <li class="nav-item"><a class="nav-link" routerLink="/wishlist" routerLinkActive="active">Wishlist</a></li>
+          <!-- Nikitha: cart link with badge goes here -->
+        }
+        @if (auth.user()?.role === 'SELLER') {
+          <li class="nav-item"><a class="nav-link" routerLink="/seller/dashboard" routerLinkActive="active">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" routerLink="/seller/products" routerLinkActive="active">My products</a></li>
+          <li class="nav-item"><a class="nav-link" routerLink="/seller/orders" routerLinkActive="active">Orders</a></li>
+        }
+        @if (auth.user()?.role === 'ADMIN') {
+          <li class="nav-item"><a class="nav-link" routerLink="/admin/users" routerLinkActive="active">Users</a></li>
+          <li class="nav-item"><a class="nav-link" routerLink="/admin/categories" routerLinkActive="active">Categories</a></li>
+          <li class="nav-item"><a class="nav-link" routerLink="/admin/orders" routerLinkActive="active">Orders</a></li>
+          <li class="nav-item"><a class="nav-link" routerLink="/admin/payments" routerLinkActive="active">Payments</a></li>
+        }
+      </ul>
+
+      <ul class="navbar-nav align-items-lg-center gap-lg-2">
+        @if (auth.user(); as u) {
+          <!-- Abhinaya: <app-notification-bell /> goes here -->
+          <li class="nav-item account">
+            <button type="button" class="account-btn" [attr.aria-expanded]="accountOpen()"
+                    aria-haspopup="menu" (click)="toggleAccount($event)">
+              <span class="avatar">{{ initials() }}</span>
+              <span class="account-name">{{ u.fullName }}</span>
+              @if (u.role !== 'BUYER') {
+                <span class="role-chip">{{ u.role === 'SELLER' ? 'Seller' : 'Admin' }}</span>
+              }
+              <span class="caret" aria-hidden="true">▾</span>
+            </button>
+
+            @if (accountOpen()) {
+              <div class="account-menu" role="menu">
+                <div class="account-head">
+                  <div class="fw-semibold">{{ u.fullName }}</div>
+                  <div class="small text-muted text-truncate">{{ u.email }}</div>
+                </div>
+                <a class="account-item" role="menuitem" [routerLink]="auth.homeFor(u.role)" (click)="closeMenus()">Go to my area</a>
+                <button type="button" class="account-item text-danger" role="menuitem" (click)="logout()">Log out</button>
+              </div>
+            }
+          </li>
+        } @else {
+          <li class="nav-item"><a class="nav-link" routerLink="/login" routerLinkActive="active">Log in</a></li>
+          <li class="nav-item"><a class="btn btn-accent btn-sm px-3" routerLink="/register">Sign up</a></li>
+        }
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- clicking anywhere else closes the account menu -->
+@if (accountOpen()) {
+  <div class="backdrop" (click)="accountOpen.set(false)"></div>
+}
+
+<main class="app-main">
+  <router-outlet />
+</main>
+
+<footer class="rs-footer">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-5">
+        <div class="brand-word fs-5">Rev<span class="brand-accent">Shop</span></div>
+        <p class="footer-text mt-2 mb-0">One store, many sellers. Browse, add to cart and check out with online payment or cash on delivery.</p>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="footer-title">Shop</div>
+        <a routerLink="/products">All products</a>
+        <a routerLink="/orders">My orders</a>
+        <a routerLink="/wishlist">Wishlist</a>
+      </div>
+      <div class="col-6 col-md-4">
+        <div class="footer-title">Sell</div>
+        <a routerLink="/register/seller">Become a seller</a>
+        <a routerLink="/seller/dashboard">Seller dashboard</a>
+        <a routerLink="/seller/products">Manage products</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© {{ year }} RevShop</span>
+      <span>Built by Kiran, Hasitha, Nikitha and Abhinaya</span>
+    </div>
+  </div>
+</footer>
