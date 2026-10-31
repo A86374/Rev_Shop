@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -41,4 +42,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                          @Param("minPrice") BigDecimal minPrice,
                          @Param("maxPrice") BigDecimal maxPrice,
                          Pageable pageable);
+
+    // US-14: takes the stock only if enough is left, in one SQL statement,
+    // so two buyers can never both get the last item. Returns 0 when it isn't enough.
+    @Modifying
+    @Query("update Product p set p.stock = p.stock - :qty where p.id = :id and p.active = true and p.stock >= :qty")
+    int decrementStock(@Param("id") Long id, @Param("qty") int qty);
+
+    @Modifying
+    @Query("update Product p set p.stock = p.stock + :qty where p.id = :id")
+    int incrementStock(@Param("id") Long id, @Param("qty") int qty);
 }

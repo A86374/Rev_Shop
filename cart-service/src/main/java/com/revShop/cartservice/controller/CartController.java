@@ -64,4 +64,10 @@ public class CartController {
 
         cartService.removeFromCart(userId, productId);
     }
+    // US-14: order-service calls this after a successful checkout
+    @DeleteMapping("/{userId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void clearCart(@PathVariable("userId") Long userId) {
+        cartService.clearCart(userId);
+    }
 }
