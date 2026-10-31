@@ -4,7 +4,7 @@ import { LoginComponent } from './features/auth/login.component';
 import { RegisterComponent } from './features/auth/register.component';
 import { ProfileComponent } from './features/profile/profile.component';
 import { authGuard, roleGuard } from './core/auth.guard';
-
+import { PaymentDemoComponent } from './features/payment/payment-demo.component';
 // Everyone adds their routes under their own name, so pulls don't clash.
 // Keep the '**' line at the very bottom.
 export const routes: Routes = [
@@ -16,7 +16,7 @@ export const routes: Routes = [
   // ---- Nikitha: catalogue, cart, checkout ----
 
   // ---- Abhinaya: orders, admin users, payment ----
-
+  { path: 'payment-demo', component: PaymentDemoComponent },
   // ---- Hasitha: seller pages ----
 
   { path: '**', redirectTo: '' },
