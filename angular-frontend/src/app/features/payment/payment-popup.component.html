@@ -1,0 +1,42 @@
+<div class="modal d-block" tabindex="-1" role="dialog" aria-modal="true"
+     aria-labelledby="payTitle" style="background: rgba(0, 0, 0, 0.5)">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="payTitle">Confirm payment</h5>
+      </div>
+
+      <div class="modal-body text-center">
+        @switch (state()) {
+        @case ('waiting') {
+        <p class="text-muted mb-1">Amount to pay</p>
+        <p class="display-6 fw-semibold mb-3">{{ amount() | currency: 'INR' }}</p>
+        <p class="mb-1">This is a demo payment. Choose Pay or Cancel.</p>
+        <p class="small text-muted mb-0">Time left: <strong>{{ timeLeft() }}</strong></p>
+        }
+        @case ('working') {
+        <div class="spinner-border" role="status"><span class="visually-hidden">Processing</span></div>
+        <p class="mt-2 mb-0">Processing…</p>
+        }
+        @case ('success') {
+        <p class="text-success fs-5 mb-0">Payment successful</p>
+        }
+        @case ('failed') {
+        <p class="text-danger fs-5 mb-0">{{ message() }}</p>
+        }
+        }
+      </div>
+
+      <div class="modal-footer">
+        @if (state() === 'waiting') {
+        <button type="button" class="btn btn-outline-secondary" (click)="decide('CANCEL')">Cancel</button>
+        <button type="button" class="btn btn-primary" (click)="decide('PAY')">
+          Pay {{ amount() | currency: 'INR' }}
+        </button>
+        } @else if (state() === 'success' || state() === 'failed') {
+        <button type="button" class="btn btn-primary" (click)="close()">Close</button>
+        }
+      </div>
+    </div>
+  </div>
+</div>
