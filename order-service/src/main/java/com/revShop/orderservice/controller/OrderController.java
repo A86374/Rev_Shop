@@ -24,4 +24,11 @@ public class OrderController {
                                  @RequestHeader("X-User-Id") Long buyerId) {
         return orderService.myOrder(id, buyerId);
     }
+
+    // US-18
+    @PostMapping("/{id}/cancel")
+    public OrderResponse cancel(@PathVariable("id") Long id,
+                                @RequestHeader("X-User-Id") Long buyerId) {
+        return orderService.cancel(id, buyerId);
+    }
 }

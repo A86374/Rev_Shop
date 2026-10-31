@@ -1,0 +1,6 @@
+# Runtime-only image: the jar is built by GitHub Actions with the Maven cache,
+# so Docker never downloads Maven dependencies (no more random download failures).
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+COPY *.jar app.jar
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
