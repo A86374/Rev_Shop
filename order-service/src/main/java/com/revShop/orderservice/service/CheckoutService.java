@@ -39,6 +39,7 @@ public class CheckoutService {
     private final CheckoutCartClient cartClient;
     private final CheckoutStockClient stockClient;
     private final CheckoutPaymentClient paymentClient;
+    private final OrderNotifier notifier;   // NEW: Abhinaya's
 
     public CheckoutResponse checkout(Long buyerId, CheckoutRequest request) {
         // 1. what is in the cart
@@ -98,6 +99,12 @@ public class CheckoutService {
             // 4. one payment for the whole checkout
             CheckoutPaymentClient.PaymentInfo payment = paymentClient.create(new CheckoutPaymentClient.NewPayment(
                     checkoutRef, buyerId, grandTotal, request.paymentMethod().name()));
+
+            // NEW: COD orders are placed now, so the buyer and sellers hear about it.
+            // Online orders are announced by Abhinaya's code once the buyer pays.
+            if (request.paymentMethod() == PaymentMethod.COD) {
+                notifier.placed(saved);
+            }
 
             // 5. empty the cart; the orders are already safe if this one fails
             try {
