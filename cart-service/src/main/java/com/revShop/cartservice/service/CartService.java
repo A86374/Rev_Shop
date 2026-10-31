@@ -8,6 +8,7 @@ import com.revShop.cartservice.repository.CartItemRepository;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -119,4 +120,12 @@ public class CartService {
                     "Could not retrieve product details from Product Service");
         }
     }
+
+    // US-14: checkout empties the cart once the orders exist
+    @Transactional
+    public void clearCart(Long userId) {
+        cartItemRepository.deleteByUserId(userId);
+    }
+
+
 }
