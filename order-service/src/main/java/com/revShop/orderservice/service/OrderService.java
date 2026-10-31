@@ -22,6 +22,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductStockClient stockClient;
+    private final OrderNotifier notifier;   // NEW
 
     // US-17: newest first
     @Transactional(readOnly = true)
@@ -52,6 +53,7 @@ public class OrderService {
         order.setStatus(OrderStatus.CANCELLED);
         order.setRefunded(paidOnline);
         releaseStock(order);
+        notifier.cancelled(order);   // NEW: tells the seller, and the buyer about the refund
         return OrderResponse.from(order);
     }
 
@@ -69,6 +71,13 @@ public class OrderService {
                 order.setStatus(OrderStatus.CANCELLED);
                 releaseStock(order);
             }
+        }
+
+        // NEW: the buyer and every seller hear about it
+        if (success) {
+            notifier.placed(waiting);
+        } else {
+            notifier.paymentFailed(waiting);
         }
         return waiting.size();
     }
