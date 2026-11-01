@@ -16,6 +16,23 @@ export interface ProductCard {
   stockLabel: string;
 }
 
+// NEW: what GET /api/products/{id}/details returns
+export interface ProductDetails {
+  id: number;
+  name: string;
+  description: string | null;
+  categoryId: number;
+  categoryName: string;
+  mrp: number;
+  price: number;
+  discountPercent: number;
+  stock: number;
+  stockStatus: StockStatus;
+  stockLabel: string;
+  sellerId: number;
+  images: string[]; // photo URLs, the first one is the main photo
+}
+
 export interface PagedResponse<T> {
   content: T[];
   page: number;
@@ -62,6 +79,11 @@ export class CatalogService {
       params = params.set('maxPrice', q.maxPrice);
     }
     return this.http.get<PagedResponse<ProductCard>>(`${API}/products/search`, { params });
+  }
+
+  // NEW: the product page
+  details(id: number): Observable<ProductDetails> {
+    return this.http.get<ProductDetails>(`${API}/products/${id}/details`);
   }
 
   categories(): Observable<Category[]> {
