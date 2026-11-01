@@ -85,7 +85,7 @@
     <input type="file" class="form-control" accept="image/jpeg,image/png,image/webp" multiple
            (change)="onFiles($event)" aria-label="Add photos">
     }
-    <div class="form-text">JPG, PNG or WEBP, up to 5 MB each. New photos upload when you save.</div>
+    <div class="form-text">JPG, PNG or WEBP, up to 2 MB each. New photos upload when you save.</div>
     @if (photoError()) {
     <div class="text-danger small mt-1">{{ photoError() }}</div>
     }

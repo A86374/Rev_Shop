@@ -41,7 +41,7 @@ export class ProductFormComponent implements OnDestroy {
 
   readonly maxPhotos = 5;
   private readonly allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-  private readonly maxBytes = 5 * 1024 * 1024;
+  private readonly maxBytes = 2 * 1024 * 1024; // US-06: 2 MB per photo
 
   productId = signal<number | null>(null); // null while adding a new product
   categories = signal<Category[]>([]);
@@ -98,7 +98,7 @@ export class ProductFormComponent implements OnDestroy {
         continue;
       }
       if (file.size > this.maxBytes) {
-        this.photoError.set(`${file.name} is bigger than 5 MB`);
+        this.photoError.set(`${file.name} is bigger than 2 MB`);
         continue;
       }
       this.pending.update((list) => [...list, { file, preview: URL.createObjectURL(file) }]);
