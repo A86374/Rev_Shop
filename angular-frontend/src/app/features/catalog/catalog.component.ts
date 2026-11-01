@@ -1,8 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CatalogService, Category, PagedResponse, ProductCard } from './catalog.service';
+import { CartApiService } from '../cart/cart-api.service';
+import { AuthService } from '../../core/auth.service';
 
 @Component({
   selector: 'app-catalog',
@@ -11,6 +13,9 @@ import { CatalogService, Category, PagedResponse, ProductCard } from './catalog.
 })
 export class CatalogComponent {
   private service = inject(CatalogService);
+  private cart = inject(CartApiService);
+  private auth = inject(AuthService);
+  private router = inject(Router);
   private fb = inject(FormBuilder);
 
   readonly pageSize = 12;
@@ -20,6 +25,8 @@ export class CatalogComponent {
   page = signal(0);
   loading = signal(false);
   error = signal('');
+  addingId = signal<number | null>(null);
+  added = signal(''); // short "added to cart" message
 
   filters = this.fb.group({
     keyword: [''],
@@ -57,6 +64,26 @@ export class CatalogComponent {
     this.page.set(page);
     this.load();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  addToCart(p: ProductCard): void {
+    if (!this.auth.user()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.addingId.set(p.id);
+    this.error.set('');
+    this.cart.add(p.id).subscribe({
+      next: () => {
+        this.addingId.set(null);
+        this.added.set(`${p.name} added to your cart`);
+        setTimeout(() => this.added.set(''), 2500);
+      },
+      error: (err) => {
+        this.addingId.set(null);
+        this.error.set(err.error?.message ?? 'Could not add to cart');
+      },
+    });
   }
 
   private load(): void {
