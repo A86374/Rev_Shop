@@ -4,6 +4,7 @@ import { AuthService } from './core/auth.service';
 import { NotificationBellComponent } from './features/notifications/notification-bell.component';
 
 // The navbar and footer live here (app.html). Abhinaya adds the notification bell, Nikitha the cart badge.
+import { CartApiService } from './features/cart/cart-api.service';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, RouterLink, RouterLinkActive, NotificationBellComponent],
@@ -12,6 +13,8 @@ import { NotificationBellComponent } from './features/notifications/notification
 })
 export class App {
   protected readonly auth = inject(AuthService);
+  protected readonly cart = inject(CartApiService);
+
   protected readonly menuOpen = signal(false); // the mobile menu
   protected readonly accountOpen = signal(false); // the account menu under the avatar
   protected readonly year = new Date().getFullYear();
