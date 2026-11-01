@@ -1,0 +1,57 @@
+<div class="container py-4" style="max-width: 900px;">
+  <h2 class="h4 mb-3">Categories</h2>
+
+  <form class="row g-2 align-items-start mb-4" [formGroup]="addForm" (ngSubmit)="add()" novalidate>
+    <div class="col-md-4">
+      <input class="form-control" formControlName="name" placeholder="New category name" aria-label="Name"
+             [class.is-invalid]="addForm.controls.name.invalid && addForm.controls.name.touched">
+      <div class="invalid-feedback">Name is required (up to 100 characters).</div>
+    </div>
+    <div class="col-md-6">
+      <input class="form-control" formControlName="description" placeholder="Description (optional)" aria-label="Description">
+    </div>
+    <div class="col-md-2 d-grid">
+      <button type="submit" class="btn btn-primary" [disabled]="saving()">Add</button>
+    </div>
+  </form>
+
+  @if (error()) {
+  <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+  <p class="text-muted">Loading categories…</p>
+  } @else {
+  <div class="table-responsive">
+    <table class="table align-middle">
+      <thead><tr><th>Name</th><th>Description</th><th class="text-end"></th></tr></thead>
+      <tbody>
+      @for (c of categories(); track c.id) {
+      @if (editingId() === c.id) {
+      <tr [formGroup]="editForm">
+        <td><input class="form-control form-control-sm" formControlName="name" aria-label="Name"
+                   [class.is-invalid]="editForm.controls.name.invalid"></td>
+        <td><input class="form-control form-control-sm" formControlName="description" aria-label="Description"></td>
+        <td class="text-end text-nowrap">
+          <button type="button" class="btn btn-sm btn-primary me-1" [disabled]="saving()" (click)="saveEdit(c)">Save</button>
+          <button type="button" class="btn btn-sm btn-outline-secondary" (click)="editingId.set(null)">Cancel</button>
+        </td>
+      </tr>
+      } @else {
+      <tr>
+        <td class="fw-semibold">{{ c.name }}</td>
+        <td class="text-muted">{{ c.description }}</td>
+        <td class="text-end text-nowrap">
+          <button type="button" class="btn btn-sm btn-outline-primary me-1" (click)="startEdit(c)">Edit</button>
+          <button type="button" class="btn btn-sm btn-outline-danger" [disabled]="saving()" (click)="remove(c)">Delete</button>
+        </td>
+      </tr>
+      }
+      } @empty {
+      <tr><td colspan="3" class="text-center text-muted py-4">No categories yet</td></tr>
+      }
+      </tbody>
+    </table>
+  </div>
+  }
+</div>

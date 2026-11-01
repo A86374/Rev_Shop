@@ -11,6 +11,9 @@ import { SellerRegisterComponent } from './features/seller/seller-register.compo
 // add these imports at the top of Kiran's app.routes.ts
 import { MyProductsComponent } from './features/seller/my-products.component';
 import { ProductFormComponent } from './features/seller/product-form.component';
+
+// add this import at the top of app.routes.ts
+import { AdminCategoriesComponent } from './features/admin/admin-categories.component';
 // Everyone adds their routes under their own name, so pulls don't clash.
 // Keep the '**' line at the very bottom.
 export const routes: Routes = [
@@ -30,6 +33,13 @@ export const routes: Routes = [
   { path: 'seller/products', component: MyProductsComponent },
   { path: 'seller/products/new', component: ProductFormComponent },
   { path: 'seller/products/:id/edit', component: ProductFormComponent },
+
+  // add this entry under "---- Hasitha: seller pages ----"
+  {
+    path: 'admin/categories',
+    component: AdminCategoriesComponent,
+    canActivate: [roleGuard('ADMIN')],
+  },
 
   { path: '**', redirectTo: '' },
 ];
