@@ -1,0 +1,57 @@
+<section class="mt-5" id="reviews">
+  <h2 class="h5">Reviews</h2>
+
+  @if (data(); as d) {
+  @if (d.count > 0) {
+  <p>
+    <span class="text-warning fs-5">{{ stars(d.averageRating) }}</span>
+    <span class="fw-semibold ms-1">{{ d.averageRating }}</span>
+    <span class="text-muted"> · {{ d.count }} {{ d.count === 1 ? 'review' : 'reviews' }}</span>
+  </p>
+  } @else {
+  <p class="text-muted">No reviews yet.</p>
+  }
+
+  @for (r of d.reviews; track r.id) {
+  <div class="border-top py-2">
+    <span class="text-warning">{{ stars(r.rating) }}</span>
+    <span class="small text-muted ms-2">Verified buyer · {{ r.createdAt | date: 'dd MMM yyyy' }}</span>
+    @if (r.comment) {
+    <p class="mb-0">{{ r.comment }}</p>
+    }
+  </div>
+  }
+  }
+
+  @if (isBuyer()) {
+  <form class="card card-body mt-3" style="max-width: 560px;" [formGroup]="form" (ngSubmit)="submit()">
+    <h3 class="h6">Write a review</h3>
+    <p class="small text-muted mb-2">You can review a product once it has been delivered to you.</p>
+
+    @if (thanks()) {
+    <div class="alert alert-success py-2">Thanks, your review is up.</div>
+    }
+    @if (error()) {
+    <div class="alert alert-danger py-2">{{ error() }}</div>
+    }
+
+    <label for="rating" class="form-label small mb-1">Rating</label>
+    <select id="rating" class="form-select mb-2" formControlName="rating">
+      <option [ngValue]="5">★★★★★ Excellent</option>
+      <option [ngValue]="4">★★★★☆ Good</option>
+      <option [ngValue]="3">★★★☆☆ Okay</option>
+      <option [ngValue]="2">★★☆☆☆ Poor</option>
+      <option [ngValue]="1">★☆☆☆☆ Bad</option>
+    </select>
+
+    <label for="comment" class="form-label small mb-1">Comment (optional)</label>
+    <textarea id="comment" class="form-control mb-3" rows="3" maxlength="1000" formControlName="comment"></textarea>
+
+    <button type="submit" class="btn btn-primary align-self-start" [disabled]="saving()">
+      {{ saving() ? 'Posting…' : 'Post review' }}
+    </button>
+  </form>
+  } @else if (!auth.user()) {
+  <p class="small text-muted mt-3"><a routerLink="/login">Log in</a> to review products you bought.</p>
+  }
+</section>
