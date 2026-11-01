@@ -21,6 +21,8 @@ import { ProductFormComponent } from './features/seller/product-form.component';
 
 // add this import at the top of app.routes.ts
 import { AdminCategoriesComponent } from './features/admin/admin-categories.component';
+
+import { CatalogComponent } from './features/catalog/catalog.component';
 // Everyone adds their routes under their own name, so pulls don't clash.
 // Keep the '**' line at the very bottom.
 export const routes: Routes = [
@@ -30,6 +32,7 @@ export const routes: Routes = [
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
 
   // ---- Nikitha: catalogue, cart, checkout ----
+  { path: 'products', component: CatalogComponent },
 
   // ---- Abhinaya: orders, admin users, payment ----
   { path: 'orders', component: MyOrdersComponent },
