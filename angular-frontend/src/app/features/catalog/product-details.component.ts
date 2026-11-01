@@ -8,9 +8,10 @@ import { CartApiService } from '../cart/cart-api.service';
 import { WishlistService } from '../wishlist/wishlist.service';
 import { AuthService } from '../../core/auth.service';
 // Abhinaya adds her reviews import here
+import { ProductReviewsComponent } from '../reviews/product-reviews.component';
 @Component({
   selector: 'app-product-details',
-  imports: [CurrencyPipe, RouterLink],
+  imports: [CurrencyPipe, RouterLink, ProductReviewsComponent],
   templateUrl: './product-details.component.html',
 })
 export class ProductDetailsComponent {
