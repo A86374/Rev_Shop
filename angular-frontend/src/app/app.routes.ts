@@ -7,6 +7,9 @@ import { authGuard, roleGuard } from './core/auth.guard';
 import { PaymentDemoComponent } from './features/payment/payment-demo.component';
 // add this import at the top of Kiran's app.routes.ts
 import { SellerRegisterComponent } from './features/seller/seller-register.component';
+// add these imports at the top of app.routes.ts
+import { SellerOrdersComponent } from './features/seller/seller-orders.component';
+import { SellerDashboardComponent } from './features/seller/seller-dashboard.component';
 
 // add these imports at the top of Kiran's app.routes.ts
 import { MyProductsComponent } from './features/seller/my-products.component';
@@ -39,6 +42,14 @@ export const routes: Routes = [
     path: 'admin/categories',
     component: AdminCategoriesComponent,
     canActivate: [roleGuard('ADMIN')],
+  },
+
+  // add these entries under "---- Hasitha: seller pages ----"
+  { path: 'seller/orders', component: SellerOrdersComponent, canActivate: [roleGuard('SELLER')] },
+  {
+    path: 'seller/dashboard',
+    component: SellerDashboardComponent,
+    canActivate: [roleGuard('SELLER')],
   },
 
   { path: '**', redirectTo: '' },
