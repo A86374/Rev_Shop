@@ -1,0 +1,57 @@
+<div class="container py-4" style="max-width: 960px;">
+  <h2 class="h4 mb-3">Orders</h2>
+
+  <ul class="nav nav-pills flex-wrap gap-1 mb-3">
+    @for (tab of tabs; track tab.value) {
+    <li class="nav-item">
+      <button type="button" class="nav-link" [class.active]="status() === tab.value"
+              (click)="show(tab.value)">{{ tab.text }}</button>
+    </li>
+    }
+  </ul>
+
+  @if (error()) {
+  <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+  <p class="text-muted">Loading orders…</p>
+  } @else {
+  @for (order of orders(); track order.id) {
+  <div class="card mb-3">
+    <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <div>
+        <strong>Order #{{ order.id }}</strong>
+        <span class="small text-muted ms-2">{{ order.createdAt | date: 'dd MMM yyyy, h:mm a' }}</span>
+      </div>
+      <span class="badge" [class]="badge[order.status]">{{ label[order.status] }}</span>
+    </div>
+    <div class="card-body">
+      <ul class="list-unstyled mb-2">
+        @for (item of order.items; track item.productId) {
+        <li class="d-flex justify-content-between">
+          <span>{{ item.productName }} × {{ item.quantity }}</span>
+          <span>{{ item.lineTotal | currency: 'INR' }}</span>
+        </li>
+        }
+      </ul>
+      <div class="d-flex justify-content-between fw-semibold border-top pt-2">
+        <span>Total · {{ order.paymentMethod === 'COD' ? 'Cash on delivery' : 'Paid online' }}</span>
+        <span>{{ order.totalAmount | currency: 'INR' }}</span>
+      </div>
+      <p class="small text-muted mt-2 mb-0">Deliver to: {{ order.shippingAddress }}</p>
+    </div>
+    @if (order.status === 'PLACED' || order.status === 'SHIPPED') {
+    <div class="card-footer text-end">
+      <button type="button" class="btn btn-sm btn-primary"
+              [disabled]="busyId() === order.id" (click)="advance(order)">
+        {{ order.status === 'PLACED' ? 'Mark as shipped' : 'Mark as delivered' }}
+      </button>
+    </div>
+    }
+  </div>
+  } @empty {
+  <p class="text-muted">No orders here yet.</p>
+  }
+  }
+</div>
