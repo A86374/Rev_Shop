@@ -33,7 +33,19 @@
         @if (auth.user()?.role === 'BUYER') {
           <li class="nav-item"><a class="nav-link" routerLink="/orders" routerLinkActive="active">My orders</a></li>
           <li class="nav-item"><a class="nav-link" routerLink="/wishlist" routerLinkActive="active">Wishlist</a></li>
+
           <!-- Nikitha: cart link with badge goes here -->
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/cart" routerLinkActive="active">
+            Cart
+            @if (cart.count() > 0) {
+            <span class="badge rounded-pill bg-primary ms-1">
+                  {{ cart.count() }}
+                </span>
+                }
+               </a>
+        </li>
+
         }
         @if (auth.user()?.role === 'SELLER') {
           <li class="nav-item"><a class="nav-link" routerLink="/seller/dashboard" routerLinkActive="active">Dashboard</a></li>

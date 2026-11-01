@@ -1,0 +1,57 @@
+<div class="container py-4" style="max-width: 900px;">
+  <h2 class="h4 mb-3">Your cart</h2>
+
+  @if (error()) {
+  <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+  <p class="text-muted">Loading your cart…</p>
+  } @else if (rows().length === 0) {
+  <p class="text-muted">Your cart is empty. <a routerLink="/products">Browse products</a></p>
+  } @else {
+  <div class="list-group mb-3">
+    @for (r of rows(); track r.line.productId) {
+    <div class="list-group-item d-flex flex-wrap align-items-center gap-3">
+      <div class="flex-grow-1" style="min-width: 180px;">
+        @if (r.product) {
+        <div class="fw-semibold">{{ r.product.name }}</div>
+        <div class="small text-muted">{{ r.product.price | currency: 'INR' }} each</div>
+        } @else {
+        <div class="fw-semibold text-muted">Product no longer available</div>
+        }
+        @if (!available(r)) {
+        <div class="small text-danger">
+          {{ r.product ? 'Only ' + r.product.stock + ' left: lower the quantity' : 'Remove it to check out' }}
+        </div>
+        }
+      </div>
+
+      <div class="input-group input-group-sm" style="width: 120px;">
+        <button type="button" class="btn btn-outline-secondary" (click)="change(r, -1)"
+                [disabled]="r.line.quantity <= 1 || busyId() === r.line.productId" aria-label="One less">−</button>
+        <span class="input-group-text flex-fill justify-content-center">{{ r.line.quantity }}</span>
+        <button type="button" class="btn btn-outline-secondary" (click)="change(r, 1)"
+                [disabled]="!r.product || busyId() === r.line.productId" aria-label="One more">+</button>
+      </div>
+
+      <div class="fw-semibold text-end" style="width: 110px;">
+        {{ r.product ? (r.product.price * r.line.quantity | currency: 'INR') : '—' }}
+      </div>
+
+      <button type="button" class="btn btn-sm btn-link text-danger" (click)="remove(r)"
+              [disabled]="busyId() === r.line.productId">Remove</button>
+    </div>
+    }
+  </div>
+
+  <div class="d-flex flex-wrap justify-content-end align-items-center gap-3">
+    <span class="fs-5">Total: <strong>{{ total() | currency: 'INR' }}</strong></span>
+    @if (blocked()) {
+    <button type="button" class="btn btn-primary" disabled>Proceed to checkout</button>
+    } @else {
+    <a routerLink="/checkout" class="btn btn-primary">Proceed to checkout</a>
+    }
+  </div>
+  }
+</div>

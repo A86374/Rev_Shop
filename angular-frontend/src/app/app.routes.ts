@@ -25,6 +25,8 @@ import { ProductFormComponent } from './features/seller/product-form.component';
 import { AdminCategoriesComponent } from './features/admin/admin-categories.component';
 
 import { CatalogComponent } from './features/catalog/catalog.component';
+import { CartComponent } from './features/cart/cart.component';
+import { CheckoutComponent } from './features/checkout/checkout.component';
 // Everyone adds their routes under their own name, so pulls don't clash.
 // Keep the '**' line at the very bottom.
 export const routes: Routes = [
@@ -35,6 +37,9 @@ export const routes: Routes = [
 
   // ---- Nikitha: catalogue, cart, checkout ----
   { path: 'products', component: CatalogComponent },
+  { path: 'products', component: CatalogComponent },
+  { path: 'cart', component: CartComponent },
+  { path: 'checkout', component: CheckoutComponent },
 
   // ---- Abhinaya: orders, admin users, payment ----
   { path: 'orders', component: MyOrdersComponent },

@@ -55,17 +55,19 @@
   <div class="row g-3">
     @for (p of res.content; track p.id) {
     <div class="col-6 col-md-4 col-lg-3">
-      <a class="card h-100 text-decoration-none text-reset" [routerLink]="['/products', p.id]">
-        @if (p.imageUrl) {
-        <img [src]="p.imageUrl" [alt]="p.name" class="card-img-top"
-             style="aspect-ratio: 1; object-fit: cover;">
-        } @else {
-        <div class="card-img-top bg-light d-flex align-items-center justify-content-center text-muted small"
-             style="aspect-ratio: 1;">No photo</div>
-        }
+      <div class="card h-100">
+        <a [routerLink]="['/products', p.id]">
+          @if (p.imageUrl) {
+          <img [src]="p.imageUrl" [alt]="p.name" class="card-img-top"
+               style="aspect-ratio: 1; object-fit: cover;">
+          } @else {
+          <div class="card-img-top bg-light d-flex align-items-center justify-content-center text-muted small"
+               style="aspect-ratio: 1;">No photo</div>
+          }
+        </a>
         <div class="card-body d-flex flex-column gap-1">
           <span class="small text-muted">{{ p.categoryName }}</span>
-          <span class="fw-semibold">{{ p.name }}</span>
+          <a class="fw-semibold text-reset text-decoration-none" [routerLink]="['/products', p.id]">{{ p.name }}</a>
           <div>
             <span class="fw-bold">{{ p.price | currency: 'INR' }}</span>
             @if (p.discountPercent > 0) {
@@ -73,12 +75,17 @@
             <span class="small text-success ms-1">{{ p.discountPercent }}% off</span>
             }
           </div>
-          <span class="badge align-self-start mt-auto"
+          <span class="badge align-self-start"
                 [class.text-bg-success]="p.stockStatus === 'IN_STOCK'"
                 [class.text-bg-warning]="p.stockStatus === 'LOW_STOCK'"
                 [class.text-bg-secondary]="p.stockStatus === 'OUT_OF_STOCK'">{{ p.stockLabel }}</span>
+          <button type="button" class="btn btn-sm btn-outline-primary mt-auto"
+                  [disabled]="p.stockStatus === 'OUT_OF_STOCK' || addingId() === p.id"
+                  (click)="addToCart(p)">
+            {{ addingId() === p.id ? 'Adding…' : 'Add to cart' }}
+          </button>
         </div>
-      </a>
+      </div>
     </div>
     }
   </div>
@@ -93,5 +100,9 @@
   </nav>
   }
   }
+  }
+
+  @if (added()) {
+  <div class="alert alert-success py-2 px-3 position-fixed bottom-0 end-0 m-3 shadow" role="status">{{ added() }}</div>
   }
 </div>
