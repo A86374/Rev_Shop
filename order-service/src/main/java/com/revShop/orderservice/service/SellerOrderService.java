@@ -22,6 +22,7 @@ public class SellerOrderService {
 
     private final OrderRepository orderRepository;
     private final SellerPaymentClient paymentClient;
+    private final OrderNotifier notifier;   // US-21: tells the buyer about shipping and delivery
 
     // US-19: the seller's orders, newest first, optionally only one status
     @Transactional(readOnly = true)
@@ -50,6 +51,7 @@ public class SellerOrderService {
         }
 
         order.setStatus(next);
+        notifier.statusChanged(order);
 
         if (next == OrderStatus.DELIVERED && order.getPaymentMethod() == PaymentMethod.COD) {
             settleCodIfAllDelivered(order.getCheckoutRef());
