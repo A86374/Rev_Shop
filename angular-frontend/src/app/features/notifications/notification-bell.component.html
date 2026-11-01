@@ -1,0 +1,38 @@
+<div class="position-relative">
+  <button type="button" class="btn btn-link nav-link position-relative px-2" (click)="toggle()"
+          [attr.aria-expanded]="open()" aria-label="Notifications">
+    <span aria-hidden="true">🔔</span>
+    @if (unread() > 0) {
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+        {{ unread() > 9 ? '9+' : unread() }}
+      </span>
+    }
+  </button>
+
+  @if (open()) {
+  <div class="card shadow position-absolute end-0 mt-2" style="width: 320px; z-index: 1050;">
+    <div class="card-header d-flex justify-content-between align-items-center py-2">
+      <span class="fw-semibold small">Notifications</span>
+      @if (unread() > 0) {
+      <button type="button" class="btn btn-link btn-sm p-0" (click)="markAllRead()">Mark all read</button>
+      }
+    </div>
+    <div class="list-group list-group-flush" style="max-height: 360px; overflow-y: auto;">
+      @if (loading()) {
+      <div class="list-group-item small text-muted">Loading…</div>
+      }
+      @for (n of items(); track n.id) {
+      <button type="button" class="list-group-item list-group-item-action small text-start"
+              [class.fw-semibold]="!n.read" (click)="markRead(n)">
+        <div>{{ n.message }}</div>
+        <div class="text-muted" style="font-size: 12px;">{{ n.createdAt | date: 'd MMM, h:mm a' }}</div>
+      </button>
+      } @empty {
+      @if (!loading()) {
+      <div class="list-group-item small text-muted">No notifications yet</div>
+      }
+      }
+    </div>
+  </div>
+  }
+</div>
