@@ -1,0 +1,86 @@
+<div class="container py-4">
+  <a routerLink="/products" class="small text-decoration-none">← All products</a>
+
+  @if (loading()) {
+  <p class="text-muted mt-3">Loading…</p>
+  }
+  @if (error()) {
+  <div class="alert alert-danger mt-3">{{ error() }}</div>
+  }
+
+  @if (product(); as p) {
+  <div class="row g-4 mt-1">
+    <!-- photos -->
+    <div class="col-md-6">
+      @if (photo(); as main) {
+      <img [src]="main" [alt]="p.name" class="img-fluid rounded border w-100"
+           style="aspect-ratio: 1; object-fit: cover;">
+      } @else {
+      <div class="bg-light rounded border d-flex align-items-center justify-content-center text-muted"
+           style="aspect-ratio: 1;">No photo</div>
+      }
+      @if (p.images.length > 1) {
+      <div class="d-flex flex-wrap gap-2 mt-2">
+        @for (url of p.images; track url) {
+        <button type="button" class="p-0 rounded overflow-hidden bg-transparent border"
+                [class.border-primary]="url === photo()" [class.border-2]="url === photo()"
+                [attr.aria-label]="'Show photo ' + ($index + 1)" (click)="photo.set(url)">
+          <img [src]="url" alt="" width="72" height="72" style="object-fit: cover; display: block;">
+        </button>
+        }
+      </div>
+      }
+    </div>
+
+    <!-- details -->
+    <div class="col-md-6">
+      <span class="small text-muted">{{ p.categoryName }}</span>
+      <h1 class="h3">{{ p.name }}</h1>
+
+      <div class="mb-2">
+        <span class="h4 fw-bold">{{ p.price | currency: 'INR' }}</span>
+        @if (p.discountPercent > 0) {
+        <span class="text-muted text-decoration-line-through ms-2">{{ p.mrp | currency: 'INR' }}</span>
+        <span class="text-success ms-2">{{ p.discountPercent }}% off</span>
+        }
+      </div>
+
+      <span class="badge mb-3"
+            [class.text-bg-success]="p.stockStatus === 'IN_STOCK'"
+            [class.text-bg-warning]="p.stockStatus === 'LOW_STOCK'"
+            [class.text-bg-secondary]="p.stockStatus === 'OUT_OF_STOCK'">{{ p.stockLabel }}</span>
+
+      @if (p.description) {
+      <p style="white-space: pre-line;">{{ p.description }}</p>
+      }
+
+      @if (canBuy()) {
+      <div class="d-flex flex-wrap align-items-center gap-2 mt-3">
+        <div class="input-group" style="width: 140px;">
+          <button type="button" class="btn btn-outline-secondary" aria-label="One less"
+                  [disabled]="quantity() <= 1" (click)="changeQuantity(-1)">−</button>
+          <span class="form-control text-center">{{ quantity() }}</span>
+          <button type="button" class="btn btn-outline-secondary" aria-label="One more"
+                  [disabled]="quantity() >= p.stock" (click)="changeQuantity(1)">+</button>
+        </div>
+        <button type="button" class="btn btn-primary"
+                [disabled]="p.stockStatus === 'OUT_OF_STOCK' || busy()" (click)="addToCart()">
+          {{ busy() ? 'Adding…' : 'Add to cart' }}
+        </button>
+        <button type="button" class="btn"
+                [class.btn-danger]="wishlist.has(p.id)" [class.btn-outline-danger]="!wishlist.has(p.id)"
+                (click)="toggleWishlist()">
+          {{ wishlist.has(p.id) ? '♥ Saved' : '♡ Save' }}
+        </button>
+      </div>
+      }
+    </div>
+  </div>
+
+  <app-product-reviews [productId]="p.id" />
+  }
+
+  @if (message()) {
+  <div class="alert alert-success py-2 px-3 position-fixed bottom-0 end-0 m-3 shadow" role="status">{{ message() }}</div>
+  }
+</div>

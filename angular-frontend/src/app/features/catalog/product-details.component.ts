@@ -8,7 +8,6 @@ import { CartApiService } from '../cart/cart-api.service';
 import { WishlistService } from '../wishlist/wishlist.service';
 import { AuthService } from '../../core/auth.service';
 // Abhinaya adds her reviews import here
-
 @Component({
   selector: 'app-product-details',
   imports: [CurrencyPipe, RouterLink],
