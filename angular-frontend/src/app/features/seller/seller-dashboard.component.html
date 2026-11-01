@@ -1,0 +1,88 @@
+<div class="container py-4">
+  <h2 class="h4 mb-3">Dashboard</h2>
+
+  @if (error()) {
+  <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  @if (data(); as d) {
+  <div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+      <a routerLink="/seller/orders" [queryParams]="{ status: 'PLACED' }" class="card h-100 text-reset text-decoration-none">
+        <div class="card-body">
+          <div class="small text-muted">To ship</div>
+          <div class="h3 mb-0">{{ d.toShip }}</div>
+        </div>
+      </a>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="card h-100"><div class="card-body">
+        <div class="small text-muted">Shipped · Delivered</div>
+        <div class="h3 mb-0">{{ d.shipped }} · {{ d.delivered }}</div>
+      </div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="card h-100"><div class="card-body">
+        <div class="small text-muted">Revenue (delivered)</div>
+        <div class="h3 mb-0">{{ d.revenue | currency: 'INR' }}</div>
+        <div class="small text-muted">{{ d.itemsSold }} items sold</div>
+      </div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+      <div class="card h-100"><div class="card-body">
+        <div class="small text-muted">On the way</div>
+        <div class="h3 mb-0">{{ d.pendingRevenue | currency: 'INR' }}</div>
+        <div class="small text-muted">{{ d.cancelled }} cancelled · {{ d.awaitingPayment }} awaiting payment</div>
+      </div></div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <h3 class="h6">Best sellers</h3>
+      <table class="table table-sm align-middle">
+        <thead><tr><th>Product</th><th class="text-end">Units</th><th class="text-end">Revenue</th></tr></thead>
+        <tbody>
+        @for (p of d.topProducts; track p.productId) {
+        <tr><td>{{ p.productName }}</td><td class="text-end">{{ p.unitsSold }}</td><td class="text-end">{{ p.revenue | currency: 'INR' }}</td></tr>
+        } @empty {
+        <tr><td colspan="3" class="text-muted">No sales yet</td></tr>
+        }
+        </tbody>
+      </table>
+
+      <h3 class="h6 mt-4">Low stock</h3>
+      <ul class="list-group">
+        @for (p of lowStock(); track p.id) {
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span>{{ p.name }} <span class="badge text-bg-warning ms-1">{{ p.stock }} left</span></span>
+          <a [routerLink]="['/seller/products', p.id, 'edit']" class="btn btn-sm btn-outline-primary">Restock</a>
+        </li>
+        } @empty {
+        <li class="list-group-item text-muted">Every product has enough stock</li>
+        }
+      </ul>
+    </div>
+
+    <div class="col-lg-6">
+      <h3 class="h6">Latest orders</h3>
+      <ul class="list-group">
+        @for (o of d.recentOrders; track o.id) {
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+              <span>
+                #{{ o.id }} · {{ o.totalAmount | currency: 'INR' }}
+                <span class="small text-muted d-block">{{ o.createdAt | date: 'dd MMM, h:mm a' }}</span>
+              </span>
+          <span class="badge" [class]="badge[o.status]">{{ label[o.status] }}</span>
+        </li>
+        } @empty {
+        <li class="list-group-item text-muted">No orders yet</li>
+        }
+      </ul>
+      <a routerLink="/seller/orders" class="btn btn-link px-0">All orders →</a>
+    </div>
+  </div>
+  } @else if (!error()) {
+  <p class="text-muted">Loading…</p>
+  }
+</div>
