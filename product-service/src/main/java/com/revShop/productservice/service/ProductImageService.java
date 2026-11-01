@@ -18,6 +18,7 @@ import java.util.UUID;
 public class ProductImageService {
 
     private static final int MAX_PHOTOS = 5;
+    private static final long MAX_BYTES = 2L * 1024 * 1024;   // US-06: 2 MB per photo
 
     // allowed photo types and the file extension used in S3
     private static final Map<String, String> ALLOWED_TYPES = Map.of(
@@ -57,6 +58,13 @@ public class ProductImageService {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Only JPG, PNG or WEBP photos are allowed"
+            );
+        }
+
+        if (file.getSize() > MAX_BYTES) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Each photo must be 2 MB or smaller"
             );
         }
 
