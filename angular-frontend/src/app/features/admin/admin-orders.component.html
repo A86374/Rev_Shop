@@ -1,0 +1,51 @@
+<div class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h2 class="h4 mb-0">All orders</h2>
+    <select class="form-select w-auto" aria-label="Filter by status" (change)="filter($any($event.target).value)">
+      <option value="">All statuses</option>
+      @for (s of statuses; track s) {
+      <option [value]="s">{{ label[s] }}</option>
+      }
+    </select>
+  </div>
+
+  @if (error()) {
+  <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+  <p class="text-muted">Loading orders…</p>
+  } @else {
+  <p class="small text-muted">
+    {{ orders().length }} orders · {{ total() | currency: 'INR' }} in total · {{ refunds() }} refunded
+  </p>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+      <tr><th>#</th><th>Checkout</th><th>Buyer</th><th>Seller</th><th>Date</th><th>Payment</th><th class="text-end">Total</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+      @for (o of orders(); track o.id) {
+      <tr>
+        <td>{{ o.id }}</td>
+        <td class="small">{{ o.checkoutRef }}</td>
+        <td>#{{ o.buyerId }}</td>
+        <td>#{{ o.sellerId }}</td>
+        <td class="small">{{ o.createdAt | date: 'dd MMM, h:mm a' }}</td>
+        <td>{{ o.paymentMethod }}</td>
+        <td class="text-end">{{ o.totalAmount | currency: 'INR' }}</td>
+        <td>
+          <span class="badge" [class]="badge[o.status]">{{ label[o.status] }}</span>
+          @if (o.refunded) {
+          <span class="badge text-bg-dark ms-1">Refunded</span>
+          }
+        </td>
+      </tr>
+      } @empty {
+      <tr><td colspan="8" class="text-center text-muted py-4">No orders found</td></tr>
+      }
+      </tbody>
+    </table>
+  </div>
+  }
+</div>
