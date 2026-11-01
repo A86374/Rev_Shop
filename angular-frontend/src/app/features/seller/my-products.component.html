@@ -1,0 +1,61 @@
+<div class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h2 class="h4 mb-0">My products</h2>
+    <a routerLink="/seller/products/new" class="btn btn-primary">+ Add product</a>
+  </div>
+
+  @if (error()) {
+  <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+  <p class="text-muted">Loading your products…</p>
+  } @else if (products().length === 0) {
+  <p class="text-muted">No products yet. Add your first one.</p>
+  } @else {
+  <div class="table-responsive">
+    <table class="table align-middle">
+      <thead>
+      <tr><th>Product</th><th>Category</th><th class="text-end">Price</th><th class="text-end">Stock</th><th>Status</th><th></th></tr>
+      </thead>
+      <tbody>
+      @for (p of products(); track p.id) {
+      <tr [class.text-muted]="!p.active">
+        <td class="fw-semibold">{{ p.name }}</td>
+        <td>{{ p.category.name }}</td>
+        <td class="text-end">
+          {{ p.price | currency: 'INR' }}
+          @if (p.price < p.mrp) {
+          <div class="small text-muted text-decoration-line-through">{{ p.mrp | currency: 'INR' }}</div>
+          }
+        </td>
+        <td class="text-end">
+                <span [class.text-danger]="p.stock === 0" [class.text-warning]="isLow(p)" [class.fw-semibold]="p.stock === 0 || isLow(p)">
+                  {{ p.stock }}
+                </span>
+          @if (p.stock === 0) {
+          <div class="small text-danger">Out of stock</div>
+          } @else if (isLow(p)) {
+          <div class="small text-warning">Low stock</div>
+          }
+        </td>
+        <td>
+                <span class="badge" [class.text-bg-success]="p.active" [class.text-bg-secondary]="!p.active">
+                  {{ p.active ? 'On sale' : 'Inactive' }}
+                </span>
+        </td>
+        <td class="text-end text-nowrap">
+          <a [routerLink]="['/seller/products', p.id, 'edit']" class="btn btn-sm btn-outline-primary">Edit</a>
+          <button type="button" class="btn btn-sm ms-1"
+                  [class.btn-outline-danger]="p.active" [class.btn-outline-success]="!p.active"
+                  [disabled]="busyId() === p.id" (click)="toggle(p)">
+            {{ busyId() === p.id ? '…' : (p.active ? 'Deactivate' : 'Activate') }}
+          </button>
+        </td>
+      </tr>
+      }
+      </tbody>
+    </table>
+  </div>
+  }
+</div>
