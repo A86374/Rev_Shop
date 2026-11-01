@@ -26,21 +26,28 @@
           <label for="email" class="form-label small mb-1">Email (used to log in)</label>
           <input id="email" class="form-control mb-3" [value]="p.email" disabled>
 
-          <label for="fullName" class="form-label small mb-1">Full name</label>
-          <input id="fullName" class="form-control" formControlName="fullName" autocomplete="name"
-                 [class.is-invalid]="showError('fullName')">
-          <div class="invalid-feedback">Name is required.</div>
+          <!-- each field in its own div: Bootstrap shows every .invalid-feedback that comes after an invalid input in the same parent -->
+          <div>
+            <label for="fullName" class="form-label small mb-1">Full name</label>
+            <input id="fullName" class="form-control" formControlName="fullName" autocomplete="name"
+                   [class.is-invalid]="showError('fullName')">
+            <div class="invalid-feedback">Name is required.</div>
+          </div>
 
-          <label for="phone" class="form-label small mb-1 mt-3">Phone</label>
-          <input id="phone" class="form-control" formControlName="phone" inputmode="numeric" maxlength="10"
-                 autocomplete="tel" [class.is-invalid]="showError('phone')">
-          <div class="invalid-feedback">Phone must be exactly 10 digits.</div>
+          <div class="mt-3">
+            <label for="phone" class="form-label small mb-1">Phone</label>
+            <input id="phone" class="form-control" formControlName="phone" inputmode="numeric" maxlength="10"
+                   autocomplete="tel" [class.is-invalid]="showError('phone')">
+            <div class="invalid-feedback">Phone must be exactly 10 digits.</div>
+          </div>
 
           @if (p.role === 'SELLER') {
-            <label for="businessName" class="form-label small mb-1 mt-3">Business name</label>
-            <input id="businessName" class="form-control" formControlName="businessName"
-                   [class.is-invalid]="showError('businessName')">
-            <div class="invalid-feedback">Sellers need a business name.</div>
+            <div class="mt-3">
+              <label for="businessName" class="form-label small mb-1">Business name</label>
+              <input id="businessName" class="form-control" formControlName="businessName"
+                     [class.is-invalid]="showError('businessName')">
+              <div class="invalid-feedback">Sellers need a business name.</div>
+            </div>
           }
 
           <div class="d-flex align-items-center gap-3 mt-4">
