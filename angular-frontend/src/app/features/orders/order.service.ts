@@ -57,4 +57,8 @@ export class OrderService {
   get(id: number): Observable<Order> {
     return this.http.get<Order>(`${API}/${id}`);
   }
+
+  cancel(id: number): Observable<Order> {
+    return this.http.post<Order>(`${API}/${id}/cancel`, {});
+  }
 }
