@@ -1,0 +1,51 @@
+<div class="container py-4" style="max-width: 900px;">
+  <h2 class="h4 mb-3">My wishlist</h2>
+
+  @if (error()) {
+  <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+  <p class="text-muted">Loading your wishlist…</p>
+  } @else {
+  <ul class="list-group">
+    @for (item of items(); track item.productId) {
+    <li class="list-group-item d-flex flex-wrap align-items-center gap-3 py-3">
+      <div class="flex-grow-1">
+        @if (item.name) {
+        <a class="fw-semibold text-reset" [routerLink]="['/products', item.productId]">{{ item.name }}</a>
+        <div>{{ item.price | currency: 'INR' }}</div>
+        } @else {
+        <span class="fw-semibold text-muted">Product #{{ item.productId }}</span>
+        <div class="small text-muted">This product was removed by the seller</div>
+        }
+        <div class="small text-muted">Saved {{ item.addedAt | date: 'dd MMM yyyy' }}</div>
+      </div>
+
+      @if (item.available) {
+      <span class="badge text-bg-success">Available</span>
+      } @else {
+      <span class="badge text-bg-secondary">Not available</span>
+      }
+
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-sm btn-primary"
+                [disabled]="!item.available || busyId() === item.productId"
+                (click)="moveToCart(item)">Move to cart</button>
+        <button type="button" class="btn btn-sm btn-outline-danger"
+                [disabled]="busyId() === item.productId"
+                (click)="remove(item)">Remove</button>
+      </div>
+    </li>
+    } @empty {
+    <li class="list-group-item text-center text-muted py-4">
+      Nothing saved yet. <a routerLink="/products">Browse products</a>
+    </li>
+    }
+  </ul>
+  }
+
+  @if (message()) {
+  <div class="alert alert-success py-2 px-3 position-fixed bottom-0 end-0 m-3 shadow" role="status">{{ message() }}</div>
+  }
+</div>

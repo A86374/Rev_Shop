@@ -27,6 +27,8 @@ import { AdminCategoriesComponent } from './features/admin/admin-categories.comp
 import { CatalogComponent } from './features/catalog/catalog.component';
 import { CartComponent } from './features/cart/cart.component';
 import { CheckoutComponent } from './features/checkout/checkout.component';
+import { ProductDetailsComponent } from './features/catalog/product-details.component';
+import { WishlistComponent } from './features/wishlist/wishlist.component';
 // Everyone adds their routes under their own name, so pulls don't clash.
 // Keep the '**' line at the very bottom.
 export const routes: Routes = [
@@ -40,6 +42,8 @@ export const routes: Routes = [
   { path: 'products', component: CatalogComponent },
   { path: 'cart', component: CartComponent },
   { path: 'checkout', component: CheckoutComponent },
+  { path: 'products/:id', component: ProductDetailsComponent },
+  { path: 'wishlist', component: WishlistComponent, canActivate: [roleGuard('BUYER')] },
 
   // ---- Abhinaya: orders, admin users, payment ----
   { path: 'orders', component: MyOrdersComponent },
