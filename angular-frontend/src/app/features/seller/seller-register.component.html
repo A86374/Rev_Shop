@@ -1,0 +1,53 @@
+<div class="container py-4" style="max-width: 560px;">
+  <h2 class="h4 mb-1">Sell on RevShop</h2>
+  <p class="text-muted mb-4">Create a seller account to list your products.</p>
+
+  @if (error()) {
+  <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <div class="mb-3">
+      <label for="businessName" class="form-label">Business name</label>
+      <input id="businessName" class="form-control" formControlName="businessName"
+             [class.is-invalid]="showError('businessName')">
+      <div class="invalid-feedback">Business name is required (up to 150 characters).</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="fullName" class="form-label">Your name</label>
+      <input id="fullName" class="form-control" formControlName="fullName"
+             [class.is-invalid]="showError('fullName')">
+      <div class="invalid-feedback">Name is required.</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="email" class="form-label">Email</label>
+      <input id="email" type="email" class="form-control" formControlName="email"
+             [class.is-invalid]="showError('email')">
+      <div class="invalid-feedback">Enter a valid email.</div>
+    </div>
+
+    <div class="mb-3">
+      <label for="phone" class="form-label">Phone</label>
+      <input id="phone" class="form-control" formControlName="phone" inputmode="numeric" maxlength="10"
+             [class.is-invalid]="showError('phone')">
+      <div class="invalid-feedback">Phone must be exactly 10 digits.</div>
+    </div>
+
+    <div class="mb-4">
+      <label for="password" class="form-label">Password</label>
+      <input id="password" type="password" class="form-control" formControlName="password"
+             [class.is-invalid]="showError('password')">
+      <div class="invalid-feedback">At least 8 characters.</div>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100" [disabled]="saving()">
+      {{ saving() ? 'Creating account…' : 'Create seller account' }}
+    </button>
+  </form>
+
+  <p class="text-center small mt-3 mb-0">
+    Already have an account? <a routerLink="/login">Log in</a>
+  </p>
+</div>
