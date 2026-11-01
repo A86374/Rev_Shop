@@ -1,0 +1,63 @@
+<div class="container py-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h2 class="h4 mb-0">Users</h2>
+    <ul class="nav nav-pills flex-wrap gap-1">
+      @for (tab of tabs; track tab.value) {
+      <li class="nav-item">
+        <button type="button" class="nav-link" [class.active]="role() === tab.value"
+                (click)="show(tab.value)">{{ tab.text }}</button>
+      </li>
+      }
+    </ul>
+  </div>
+
+  @if (error()) {
+  <div class="alert alert-danger">{{ error() }}</div>
+  }
+
+  @if (loading()) {
+  <p class="text-muted">Loading users…</p>
+  } @else {
+  <p class="small text-muted">{{ users().length }} users · {{ blockedCount() }} blocked</p>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+      <tr><th>#</th><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Joined</th><th>Status</th><th class="text-end"></th></tr>
+      </thead>
+      <tbody>
+      @for (u of users(); track u.id) {
+      <tr>
+        <td>{{ u.id }}</td>
+        <td>
+          <div class="fw-semibold">{{ u.fullName }}</div>
+          @if (u.businessName) {
+          <div class="small text-muted">{{ u.businessName }}</div>
+          }
+        </td>
+        <td class="small">{{ u.email }}</td>
+        <td class="small">{{ u.phone }}</td>
+        <td>{{ u.role }}</td>
+        <td class="small">{{ u.createdAt | date: 'dd MMM yyyy' }}</td>
+        <td>
+          <span class="badge" [class.text-bg-success]="u.active" [class.text-bg-danger]="!u.active">
+            {{ u.active ? 'Active' : 'Blocked' }}
+          </span>
+        </td>
+        <td class="text-end text-nowrap">
+          @if (canToggle(u)) {
+          <button type="button" class="btn btn-sm"
+                  [class.btn-outline-danger]="u.active" [class.btn-outline-success]="!u.active"
+                  [disabled]="busyId() === u.id" (click)="toggle(u)">
+            {{ u.active ? 'Block' : 'Unblock' }}
+          </button>
+          }
+        </td>
+      </tr>
+      } @empty {
+      <tr><td colspan="8" class="text-center text-muted py-4">No users here</td></tr>
+      }
+      </tbody>
+    </table>
+  </div>
+  }
+</div>
