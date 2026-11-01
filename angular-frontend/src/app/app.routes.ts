@@ -5,6 +5,10 @@ import { RegisterComponent } from './features/auth/register.component';
 import { ProfileComponent } from './features/profile/profile.component';
 import { authGuard, roleGuard } from './core/auth.guard';
 import { PaymentDemoComponent } from './features/payment/payment-demo.component';
+
+import { MyOrdersComponent } from './features/orders/my-orders.component';
+import { OrderDetailsComponent } from './features/orders/order-details.component';
+
 // add this import at the top of Kiran's app.routes.ts
 import { SellerRegisterComponent } from './features/seller/seller-register.component';
 // Everyone adds their routes under their own name, so pulls don't clash.
@@ -18,6 +22,8 @@ export const routes: Routes = [
   // ---- Nikitha: catalogue, cart, checkout ----
 
   // ---- Abhinaya: orders, admin users, payment ----
+  { path: 'orders', component: MyOrdersComponent },
+  { path: 'orders/:id', component: OrderDetailsComponent },
   { path: 'payment-demo', component: PaymentDemoComponent },
   // ---- Hasitha: seller pages ----
   // add this entry inside the routes array
